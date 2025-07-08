@@ -8,7 +8,7 @@ import timm
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from matplotlib import image
+from PIL import Image
 
 #cleans the data pretty much, makes it easy for the program to read
 class BrainMRIDataset(Dataset):
@@ -151,10 +151,18 @@ def visualize(original_image, probabilities, class_names):
 
     #display predictions
     axarr[1].barh(class_names, probabilities)
-    axarr[1].xlabel("probability")
+    axarr[1].set_xlabel("probability")
     axarr[1].set_title("Class prediction")
     axarr[1].set_xlim(0, 1)
 
     plt.tight_layout()
-    plt.show
+    plt.show()
+
+test_image = "path to test image"
+
+original_image, image_tensor = image_process(test_image, transform)
+probabilities = predict(model, image_tensor, device)
+
+class_names = dataset.classes
+visualize(original_image, probabilities, class_names)
 
