@@ -10,11 +10,11 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 # Define the model
-model = models.resnet50(weights=None)  # Don't load pre-trained weights
+model = models.resnet18(weights=None)  # Don't load pre-trained weights
 model.fc = nn.Linear(model.fc.in_features, 4)  # Must match how it was trained
 
 # Load weights
-model.load_state_dict(torch.load("/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/trained_brain_mri_NN.pth", map_location='cpu'))
+model.load_state_dict(torch.load("/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/trained_models/checkpoint3.pth", map_location='cpu'))
 model.eval()
 
 #this part is needed to process the example image and make a prediction
@@ -60,7 +60,7 @@ def visualize(original_image, probabilities, class_names):
     plt.show()
 
 #example
-test_image = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Testing/meningioma/Te-me_0010.jpg"
+test_image = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain cancer - mri dataset by orvile/Brain_Cancer raw MRI data/Brain_Cancer/brain_tumor/brain_tumor_0018.jpg"
 original_image, image_tensor = image_process(test_image, transform)
 probabilities = predict(model, image_tensor, device)
 

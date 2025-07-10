@@ -78,11 +78,18 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.001) #gradient descent opti
 device = torch.device("mps" if torch.mps.is_available() else "cpu")
 
 #training loop
-num_epochs = 20
+#training loop
+
+max_epochs = 50
+num_epochs = 0
 train_losses, val_losses = [], []
+last_val_loss = 10
+last_train_loss = 10
+train_loss_tries = 0
+val_loss_tries = 0
 model.to(device)
 
-for epoch in range(num_epochs):
+while num_epochs < max_epochs:
     running_loss = 0.0 #initialize a running loss
     model.train() 
     for image, label in training_loader:
@@ -95,8 +102,8 @@ for epoch in range(num_epochs):
         running_loss += loss.item() * image.size(0)
     train_loss = running_loss / len(training_loader.dataset)
     train_losses.append(train_loss)
-    print("running loss for training: ", running_loss)
-    
+    print(running_loss)
+
     running_loss = 0.0
     model.eval()
     with torch.no_grad():
@@ -107,6 +114,32 @@ for epoch in range(num_epochs):
             running_loss += loss.item() * image.size(0)
     val_loss = running_loss / len(validation_loader.dataset)
     val_losses.append(val_loss)
+    num_epochs += 1
     
-    print("running loss for validation: ", running_loss)
-    print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+    print(running_loss)
+    print(f"Epoch {num_epochs}/{max_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+
+    if (val_loss - last_val_loss) >= 0.01:
+        num_epochs -= 1
+        val_loss_tries +=1
+        print("Max val loss threshold exceeded, restarting epoch...")
+        if val_loss_tries >= 5:
+            print("Check your code and try again bro")
+            break
+        else:   
+            pass
+    else:
+        last_val_loss = val_loss
+        val_loss_tries = 0
+    if abs(train_loss - last_train_loss) < 0.01:
+        train_loss_tries += 1
+        if train_loss_tries >= 5:
+            print("Early stopping: training loss plateaued")
+            break
+        else:
+            last_train_loss = train_loss
+            train_loss_tries = 0
+            pass
+    else:
+        last_train_loss = train_loss
