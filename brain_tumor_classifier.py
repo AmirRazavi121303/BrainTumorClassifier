@@ -46,7 +46,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]), #normalizes each rgb to have a mean & stdev of 0.5
 ])
 
-data_dir = "/kaggle/input/brain-mri-scans-2/Training"
+data_dir = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Training"
 dataset = BrainTumorClassifier(data_dir, transforms)
 
 #this loads in the data
@@ -110,44 +110,3 @@ for epoch in range(num_epochs):
     
     print("running loss for validation: ", running_loss)
     print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-
-
-#-----visualize-----
-#load and preprocess image
-def image_process(image_path, transform):
-    image = Image.open(image_path).convert("RGB")
-    return image, transform(image).unsqueeze(0)
-
-#predict using model
-def predict(model, image_tensor, device):
-    model.eval()
-    with torch.no_grad():
-        image_tensor = image_tensor.to(device)
-        outputs = model(image_tensor)
-        probabilities = torch.nn.functional.softmax(outputs, dim=1)
-    return probabilities.cpu().numpy().flatten()
-
-#visualization
-def visualize(original_image, probabilities, class_names):
-    fig, axarr = plt.subplots(1, 2, figsize=(14, 7))
-
-    #display image
-    axarr[0].imshow(original_image)
-    axarr[0].axis("off")
-
-    #display predictions
-    axarr[1].barh(class_names, probabilities)
-    axarr[1].set_xlabel("probability")
-    axarr[1].set_title("Class prediction")
-    axarr[1].set_xlim(0, 1)
-
-    plt.tight_layout()
-    plt.show()
-
-#example
-test_image = "path to test image"
-original_image, image_tensor = image_process(test_image, transform)
-probabilities = predict(model, image_tensor, device)
-
-class_names = dataset.classes
-visualize(original_image, probabilities, class_names)
