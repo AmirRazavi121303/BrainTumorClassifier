@@ -1,0 +1,66 @@
+regarding the training loop:
+
+I worked for a while on trying to get it as close as possible to perfect. Heres some things I tried:
+- Adam instead of SGD for the optimizer
+- Resnet 50 and 18
+- raising epoch
+- adding a whole bunch of if loops to make sure its training correctly
+
+All but one of these changes ended up working, the one being using Adam. I found that Adam was fluctuating way to much (it would go from a val_loss of 0.09 to 8.1)
+Ultimately I prefer SGD since it was much more controlled and it was taking slower but gradual steps. I ran it with an epoch of 50 that saved it whenever the losses
+got below a certain threshold.
+
+Things I learned:
+- tweaking parameters in order to find a minimum
+- creating custom training loops
+
+Things I should work on for the future:
+- using adam more efficiently
+- writing the code alot cleaner
+
+to get an idea of the type of losses I was getting toward the end:
+
+Epoch 40/50 - Train Loss: 0.0176, Val Loss: 0.0916
+saving this one
+90.20988292992115
+53.958384772762656
+Epoch 41/50 - Train Loss: 0.0158, Val Loss: 0.0821
+saving this one
+84.79032802954316
+54.884011782705784
+Epoch 42/50 - Train Loss: 0.0148, Val Loss: 0.0835
+saving this one
+96.27344558760524
+60.64131477102637
+Epoch 43/50 - Train Loss: 0.0169, Val Loss: 0.0923
+saving this one
+84.79166228696704
+61.58309200871736
+Epoch 44/50 - Train Loss: 0.0148, Val Loss: 0.0937
+saving this one
+86.50489649549127
+56.73700339719653
+Epoch 45/50 - Train Loss: 0.0151, Val Loss: 0.0864
+saving this one
+76.66390493139625
+54.2044296246022
+Epoch 46/50 - Train Loss: 0.0134, Val Loss: 0.0825
+saving this one
+69.17136408016086
+57.961576994508505
+Epoch 47/50 - Train Loss: 0.0121, Val Loss: 0.0882
+saving this one
+74.88006922602654
+58.49266976490617
+Epoch 48/50 - Train Loss: 0.0131, Val Loss: 0.0890
+saving this one
+64.29134439304471
+54.96529858093709
+Epoch 49/50 - Train Loss: 0.0113, Val Loss: 0.0837
+saving this one
+70.70849718153477
+52.82547375746071
+Epoch 50/50 - Train Loss: 0.0124, Val Loss: 0.0804
+saving this one
+
+I understand I could've gotten better results with more epochs, but I feel like this is pretty good for my first try at this
