@@ -51,15 +51,15 @@ dataset = BrainTumorClassifier(data_dir, transforms)
 
 #this loads in the data
 train_folder = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Training"
-test_folder = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Testing"
+validation_folder = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Validation"
 
 #this makes the data readable for the program
 train_data = BrainTumorClassifier(train_folder, transform = transform)
-test_data = BrainTumorClassifier(test_folder, transform = transform)
+validation_data = BrainTumorClassifier(validation_folder, transform = transform)
 
 #this feeds the data optimally to the program. 
 training_loader = DataLoader(train_data, batch_size = 32, n_workers= 2, shuffle=True)
-testing_loader = DataLoader(test_data, batch_size = 32, n_workers = 2, shuffle=False)
+validation_loader = DataLoader(validation_data, batch_size = 32, n_workers = 2, shuffle=False)
 
 #-----check to see if the finished data shape and labels are correct for the model-----
 for image, label in training_loader:
@@ -79,7 +79,7 @@ device = torch.device("mps" if torch.mps.is_available() else "cpu")
 
 #training loop
 num_epochs = 20
-train_losses = []
+train_losses, val_losses = [], []
 model.to(device)
 
 for epoch in range(num_epochs):
@@ -95,8 +95,22 @@ for epoch in range(num_epochs):
         running_loss += loss.item() * image.size(0)
     train_loss = running_loss / len(training_loader.dataset)
     train_losses.append(train_loss)
-    print(running_loss)
-    print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {train_loss:.4f}")
+    print("running loss for training: ", running_loss)
+    
+    running_loss = 0.0
+    model.eval()
+    with torch.no_grad():
+        for image, label in validation_loader:
+            image, label = image.to(device), label.to(device)
+            outputs = model(image)
+            loss = loss_function(outputs, label)
+            running_loss += loss.item() * image.size(0)
+    val_loss = running_loss / len(validation_loader.dataset)
+    val_losses.append(val_loss)
+    
+    print("running loss for validation: ", running_loss)
+    print(f"Epoch {epoch+1}/{num_epochs} - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
 
 #-----visualize-----
 #load and preprocess image
