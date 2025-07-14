@@ -10,7 +10,7 @@ import numpy as np
 
 #for prebuilt models
 import torchvision.models as models
-from torchvision.models import ResNet50_Weights
+from torchvision.models import ResNet18_Weights
 import timm
 
 #for NN from scratch
@@ -58,8 +58,8 @@ train_data = BrainTumorClassifier(train_folder, transform = transform)
 validation_data = BrainTumorClassifier(validation_folder, transform = transform)
 
 #this feeds the data optimally to the program. 
-training_loader = DataLoader(train_data, batch_size = 32, n_workers= 2, shuffle=True)
-validation_loader = DataLoader(validation_data, batch_size = 32, n_workers = 2, shuffle=False)
+training_loader = DataLoader(train_data, batch_size = 32, num_workers= 2, shuffle=True)
+validation_loader = DataLoader(validation_data, batch_size = 32, num_workers = 2, shuffle=False)
 
 #-----check to see if the finished data shape and labels are correct for the model-----
 for image, label in training_loader:
@@ -69,7 +69,7 @@ print(label[0:10])
 print(torch.unique(label))
 
 #-----initializing model-----
-model = models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2) #loads in the model
+model = models.resnet18(weights=ResNet18_Weights.DEFAULT) #loads in the model
 model.fc = nn.Linear(model.fc.in_features, 4) #connects the final layer of the model to a layer with 4 outputs
 loss_function = nn.CrossEntropyLoss() #calculates our loss function
 optimizer = torch.optim.SGD(model.parameters(), lr=0.001) #gradient descent optimizer

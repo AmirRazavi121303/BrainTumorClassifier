@@ -60,7 +60,7 @@ def visualize(original_image, probabilities, class_names):
     plt.show()
 
 #example
-test_image = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain cancer - mri dataset by orvile/Brain_Cancer raw MRI data/Brain_Cancer/brain_tumor/brain_tumor_0018.jpg"
+test_image = "/Users/amir/Downloads/CodeAmir/BrainTumorClassifier/brain mri scans/Testing/glioma/Te-gl_0010.jpg"
 original_image, image_tensor = image_process(test_image, transform)
 probabilities = predict(model, image_tensor, device)
 
